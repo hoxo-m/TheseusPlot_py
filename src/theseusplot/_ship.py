@@ -20,8 +20,8 @@ _MIN_BREAK_COUNT = 2
 _REFITTED_COLOR = "#00BFC4"
 _ORIGINAL_SIZE_COLOR = "#7CAE00"
 _REFITTED_SIZE_COLOR = "#C77CFF"
-_POSITIVE_COLOR = "#F8766D"
-_NEGATIVE_COLOR = "#00BFC4"
+_POSITIVE_COLOR = "#00BFC4"
+_NEGATIVE_COLOR = "#F8766D"
 
 
 class ShipOfTheseus:
@@ -695,7 +695,6 @@ class ShipOfTheseus:
         ax.axvline(0, color="#333333", linewidth=0.8)
         ax.set_yticks(positions)
         ax.set_yticklabels(waterfall["items"].astype(str))
-        ax.invert_yaxis()
         ax.set_xlabel(self.y_label or "")
         ax.set_ylabel("")
         ax.set_title(column)
@@ -733,7 +732,6 @@ class ShipOfTheseus:
                 row["scaled_n"],
                 width=width,
                 color=colors[group],
-                alpha=0.35,
                 linewidth=0,
                 zorder=1,
             )
@@ -760,7 +758,6 @@ class ShipOfTheseus:
                 row["scaled_n"],
                 height=height,
                 color=colors[group],
-                alpha=0.35,
                 linewidth=0,
                 zorder=1,
             )
@@ -774,7 +771,7 @@ class ShipOfTheseus:
         colors = [
             _REFITTED_COLOR
             if row["kind"] == "total"
-            else (_POSITIVE_COLOR if row["amount"] >= 0 else _NEGATIVE_COLOR)
+            else self._contribution_color(float(row["amount"]))
             for _, row in waterfall.iterrows()
         ]
         ax.bar(
@@ -813,7 +810,7 @@ class ShipOfTheseus:
         colors = [
             _REFITTED_COLOR
             if row["kind"] == "total"
-            else (_POSITIVE_COLOR if row["amount"] >= 0 else _NEGATIVE_COLOR)
+            else self._contribution_color(-float(row["amount"]))
             for _, row in waterfall.iterrows()
         ]
         ax.barh(
@@ -827,10 +824,12 @@ class ShipOfTheseus:
             zorder=3,
         )
         for position, (_, row) in zip(positions, waterfall.iterrows(), strict=True):
-            value = self._format_plot_value(float(row["amount"]))
+            amount = float(row["amount"])
+            display_amount = -amount if row["kind"] == "contribution" else amount
+            value = self._format_plot_value(display_amount)
             x = float(row["bottom"]) + float(row["height"])
             ha = "left"
-            if float(row["amount"]) < 0:
+            if amount < 0:
                 x = float(row["bottom"])
                 ha = "right"
             ax.text(
@@ -842,6 +841,10 @@ class ShipOfTheseus:
                 fontsize=9 * self.text_size,
                 zorder=4,
             )
+
+    @staticmethod
+    def _contribution_color(amount: float) -> str:
+        return _NEGATIVE_COLOR if amount < 0 else _POSITIVE_COLOR
 
     @staticmethod
     def _draw_connectors(
