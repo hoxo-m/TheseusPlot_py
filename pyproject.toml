@@ -8,15 +8,48 @@ version = "0.1.1"
 description = "Python port of TheseusPlot for decomposing differences in rate metrics."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
-  { name = "TheseusPlot.py contributors" },
+  { name = "Koji Makiyama" },
+]
+keywords = [
+  "decomposition",
+  "matplotlib",
+  "pandas",
+  "rate metrics",
+  "theseus plot",
+  "visualization",
+  "waterfall plot",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+  "Topic :: Scientific/Engineering :: Visualization",
 ]
 dependencies = [
   "matplotlib>=3.7",
   "numpy>=1.24",
   "pandas>=2.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/hoxo-m/TheseusPlot_py"
+Repository = "https://github.com/hoxo-m/TheseusPlot_py"
+Issues = "https://github.com/hoxo-m/TheseusPlot_py/issues"
+Changelog = "https://github.com/hoxo-m/TheseusPlot_py/releases"
+PyPI = "https://pypi.org/project/theseusplot/"
 
 [project.optional-dependencies]
 examples = [
