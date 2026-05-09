@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![PyPI version](https://img.shields.io/pypi/v/theseusplot.svg)](https://pypi.org/project/theseusplot/)
+[![Downloads](https://static.pepy.tech/badge/theseusplot)](https://pepy.tech/project/theseusplot)
 [![CI](https://github.com/hoxo-m/TheseusPlot_py/actions/workflows/ci.yml/badge.svg)](https://github.com/hoxo-m/TheseusPlot_py/actions/workflows/ci.yml)
 
 <!-- badges: end -->
@@ -50,18 +52,25 @@ Theseus Plots for various attributes.
 
 ## 2. Installation
 
-You can install the development version from
-[GitHub](https://github.com/hoxo-m/TheseusPlot_py) with:
+You can install the **theseusplot** package from
+[PyPI](https://pypi.org/project/theseusplot/) with:
 
 ``` bash
-python -m pip install "git+https://github.com/hoxo-m/TheseusPlot_py.git"
+python -m pip install theseusplot
 ```
 
 You can install the optional dependencies for examples and documentation
 data with:
 
 ``` bash
-python -m pip install "theseusplot[examples] @ git+https://github.com/hoxo-m/TheseusPlot_py.git"
+python -m pip install "theseusplot[examples]"
+```
+
+You can install the development version from
+[GitHub](https://github.com/hoxo-m/TheseusPlot_py) with:
+
+``` bash
+python -m pip install "git+https://github.com/hoxo-m/TheseusPlot_py.git"
 ```
 
 ## 3. Details
