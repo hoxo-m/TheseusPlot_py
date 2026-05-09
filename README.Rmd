@@ -86,16 +86,18 @@ The **TheseusPlot** package is designed to make it easy to generate Theseus Plot
 
 ## 2. Installation
 
-You can install the **theseusplot** package from this repository in editable mode.
+You can install the development version from
+[GitHub](https://github.com/hoxo-m/TheseusPlot_py) with:
 
 ```bash
-python -m pip install -e .
+python -m pip install "git+https://github.com/hoxo-m/TheseusPlot_py.git"
 ```
 
-You can install the optional dependencies for examples and documentation data with:
+You can install the optional dependencies for examples and documentation data
+with:
 
 ```bash
-python -m pip install -e ".[examples]"
+python -m pip install "theseusplot[examples] @ git+https://github.com/hoxo-m/TheseusPlot_py.git"
 ```
 
 ## 3. Details
