@@ -19,6 +19,9 @@ knitr::opts_chunk$set(
 
 library(reticulate)
 use_virtualenv("theseusplot-env", required = TRUE)
+knitr::opts_knit$set(
+  base.url = "https://raw.githubusercontent.com/hoxo-m/TheseusPlot_py/main/"
+)
 ```
 
 # TheseusPlot: Visualizing Decomposition of Differences in Rate Metrics

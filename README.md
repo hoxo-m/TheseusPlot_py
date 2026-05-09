@@ -42,7 +42,7 @@ Thus, the contribution of the female group is -0.2 percentage points.
 
 When visualized, the results appear as follows:
 
-<img src="README-figures/overview-1.png" alt="" width="500" />
+<img src="https://raw.githubusercontent.com/hoxo-m/TheseusPlot_py/main/README-figures/overview-1.png" alt="" width="500" />
 
 From this plot, we can see that the decline in the metric is primarily
 driven by the male group. We call this visualization the “Theseus Plot.”
@@ -159,7 +159,7 @@ fig, ax = ship.plot("origin")
 fig.show()
 ```
 
-<img src="README-figures/plot_origin-3.png" alt="" width="500" />
+<img src="https://raw.githubusercontent.com/hoxo-m/TheseusPlot_py/main/README-figures/plot_origin-3.png" alt="" width="500" />
 
 New York City has three major airports, and Newark Liberty International
 Airport (EWR) accounted for the largest share of the decline in the
@@ -200,7 +200,7 @@ fig, ax = ship.plot_flip("carrier")
 fig.show()
 ```
 
-<img src="README-figures/plot_carrier-5.png" alt="" width="500" />
+<img src="https://raw.githubusercontent.com/hoxo-m/TheseusPlot_py/main/README-figures/plot_carrier-5.png" alt="" width="500" />
 
 When the number of subgroups is large, those with small contributions
 are automatically grouped together. By default, this happens when there
@@ -212,7 +212,7 @@ fig, ax = ship.plot_flip("carrier", n=6)
 fig.show()
 ```
 
-<img src="README-figures/plot_carrier_n-7.png" alt="" width="500" />
+<img src="https://raw.githubusercontent.com/hoxo-m/TheseusPlot_py/main/README-figures/plot_carrier_n-7.png" alt="" width="500" />
 
 From this plot, JetBlue Airways and United Air Lines appear to have the
 largest contributions to the decline in on-time arrival rate.
@@ -228,7 +228,7 @@ fig, ax = ship.plot_flip("dep_delay")
 fig.show()
 ```
 
-<img src="README-figures/plot_dep_delay-9.png" alt="" width="500" />
+<img src="https://raw.githubusercontent.com/hoxo-m/TheseusPlot_py/main/README-figures/plot_dep_delay-9.png" alt="" width="500" />
 
 By default, continuous variables are discretized so that each subgroup
 has roughly equal sample sizes, with the number of bins set to 10. You
@@ -242,7 +242,7 @@ fig, ax = ship.plot_flip("dep_delay", continuous=continuous_config(n=3))
 fig.show()
 ```
 
-<img src="README-figures/plot_dep_delay_n-11.png" alt="" width="500" />
+<img src="https://raw.githubusercontent.com/hoxo-m/TheseusPlot_py/main/README-figures/plot_dep_delay_n-11.png" alt="" width="500" />
 
 This result shows that both a decrease in on-time departures and an
 increase in delayed departures contributed to the decline in on-time
@@ -296,7 +296,7 @@ fig, ax = ship.plot("segment")
 fig.show()
 ```
 
-<img src="README-figures/factor_column-13.png" alt="" width="500" />
+<img src="https://raw.githubusercontent.com/hoxo-m/TheseusPlot_py/main/README-figures/factor_column-13.png" alt="" width="500" />
 
 Even if the contribution of `"High"` is larger than that of `"Low"` or
 `"Medium"`, the rows and bars are shown in the order
