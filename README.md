@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![PyPI version](https://img.shields.io/pypi/v/theseusplot.svg)](https://pypi.org/project/theseusplot/)
+[![Downloads](https://static.pepy.tech/badge/theseusplot)](https://pepy.tech/project/theseusplot)
 [![CI](https://github.com/hoxo-m/TheseusPlot_py/actions/workflows/ci.yml/badge.svg)](https://github.com/hoxo-m/TheseusPlot_py/actions/workflows/ci.yml)
 
 <!-- badges: end -->
