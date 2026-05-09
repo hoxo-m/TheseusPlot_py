@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![CI](https://github.com/hoxo-m/TheseusPlot_py/actions/workflows/ci.yml/badge.svg)](https://github.com/hoxo-m/TheseusPlot_py/actions/workflows/ci.yml)
+
 <!-- badges: end -->
 
 ## 1. Overview
