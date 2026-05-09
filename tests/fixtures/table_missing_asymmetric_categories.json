@@ -1,0 +1,80 @@
+{
+  "name": "table_missing_asymmetric_categories",
+  "description": "Representative R output for missing values and categories present in only one group.",
+  "source": {
+    "package": "TheseusPlot",
+    "version": "0.2.0.9000",
+    "api": "create_ship(data1, data2, y = y)$table(group, n = Inf)",
+    "reference": "tests/testthat/test-test-table-missing-and-asymmetric-categories.R"
+  },
+  "call": {
+    "column": "group",
+    "n": null,
+    "continuous": null
+  },
+  "missing_label": "(Missing)",
+  "data1": {
+    "columns": ["group", "y"],
+    "rows": [
+      ["A", 1],
+      ["A", 1],
+      ["B", 0],
+      [null, 1]
+    ]
+  },
+  "data2": {
+    "columns": ["group", "y"],
+    "rows": [
+      ["A", 0],
+      ["C", 1],
+      ["C", 0],
+      [null, 0]
+    ]
+  },
+  "expected_table": {
+    "columns": ["group", "contrib", "n1", "n2", "x1", "x2", "rate1", "rate2"],
+    "overall_diff": -0.5,
+    "rows": [
+      {
+        "group": "A",
+        "contrib": -0.2875,
+        "n1": 2,
+        "n2": 1,
+        "x1": 2,
+        "x2": 0,
+        "rate1": 1.0,
+        "rate2": 0.0
+      },
+      {
+        "group": "(Missing)",
+        "contrib": -0.1875,
+        "n1": 1,
+        "n2": 1,
+        "x1": 1,
+        "x2": 0,
+        "rate1": 1.0,
+        "rate2": 0.0
+      },
+      {
+        "group": "C",
+        "contrib": -0.0625,
+        "n1": 0,
+        "n2": 2,
+        "x1": 0,
+        "x2": 1,
+        "rate1": null,
+        "rate2": 0.5
+      },
+      {
+        "group": "B",
+        "contrib": 0.0375,
+        "n1": 1,
+        "n2": 0,
+        "x1": 0,
+        "x2": 0,
+        "rate1": 0.0,
+        "rate2": null
+      }
+    ]
+  }
+}
