@@ -24,6 +24,7 @@ use_virtualenv("theseusplot-env", required = TRUE)
 # TheseusPlot: Visualizing Decomposition of Differences in Rate Metrics
 
 <!-- badges: start -->
+[![CI](https://github.com/hoxo-m/TheseusPlot_py/actions/workflows/ci.yml/badge.svg)](https://github.com/hoxo-m/TheseusPlot_py/actions/workflows/ci.yml)
 <!-- badges: end -->
 
 ## 1. Overview
