@@ -38,6 +38,17 @@ def _size_bar_widths(ax: Any) -> list[float]:
     return [patch.get_width() for patch in ax.patches if patch.get_zorder() == 1]
 
 
+def _size_bar_y_centers_by_color(ax: Any) -> dict[str, list[float]]:
+    colors = pytest.importorskip("matplotlib.colors")
+    centers: dict[str, list[float]] = {}
+    for patch in ax.patches:
+        if patch.get_zorder() != 1:
+            continue
+        color = colors.to_hex(patch.get_facecolor())
+        centers.setdefault(color, []).append(patch.get_y() + patch.get_height() / 2)
+    return centers
+
+
 def _visible_yticklabels(ax: Any) -> list[str]:
     labels = []
     for tick in ax.get_yticklabels():
@@ -275,6 +286,29 @@ def test_plot_flip_size_bars_default_to_max_score_scale() -> None:
 
     try:
         assert _size_bar_widths(ax) == pytest.approx([15.0, 15.0, 15.0, 15.0])
+    finally:
+        plt.close(fig)
+
+
+def test_plot_flip_size_bars_place_baseline_above_comparison() -> None:
+    plt = _require_pyplot()
+
+    data1 = pd.DataFrame({"group": ["A", "B"], "y": [1, 1]})
+    data2 = pd.DataFrame({"group": ["A", "B"], "y": [0, 1]})
+    ship = create_ship(data1, data2)
+
+    fig, ax = ship.plot_flip("group")
+
+    try:
+        centers = _size_bar_y_centers_by_color(ax)
+        assert all(
+            original > refitted
+            for original, refitted in zip(
+                centers["#7cae00"],
+                centers["#c77cff"],
+                strict=True,
+            )
+        )
     finally:
         plt.close(fig)
 

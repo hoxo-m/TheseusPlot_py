@@ -750,7 +750,7 @@ class ShipOfTheseus:
         positions: dict[str, int],
     ) -> None:
         height = 0.22
-        offsets = {self.labels[0]: -height / 1.5, self.labels[1]: height / 1.5}
+        offsets = {self.labels[0]: height / 1.5, self.labels[1]: -height / 1.5}
         colors = {
             self.labels[0]: _ORIGINAL_SIZE_COLOR,
             self.labels[1]: _REFITTED_SIZE_COLOR,
