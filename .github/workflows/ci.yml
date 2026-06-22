@@ -35,7 +35,7 @@ jobs:
         run: python -m ruff check .
 
       - name: Type check
-        run: python -m mypy src
+        run: python -m mypy --python-version "${{ matrix.python-version }}" src
 
       - name: Test
         run: python -m pytest
