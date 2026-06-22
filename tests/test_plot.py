@@ -1,16 +1,18 @@
+from typing import Any
+
 import pandas as pd
 import pytest
 
 from theseusplot import create_ship
 
 
-def _require_pyplot():
+def _require_pyplot() -> Any:
     matplotlib = pytest.importorskip("matplotlib")
     matplotlib.use("Agg", force=True)
     return pytest.importorskip("matplotlib.pyplot")
 
 
-def _waterfall_colors(ax) -> list[str]:
+def _waterfall_colors(ax: Any) -> list[str]:
     colors = pytest.importorskip("matplotlib.colors")
     return [
         colors.to_hex(patch.get_facecolor())
@@ -19,7 +21,7 @@ def _waterfall_colors(ax) -> list[str]:
     ]
 
 
-def _size_bar_styles(ax) -> list[tuple[str, float]]:
+def _size_bar_styles(ax: Any) -> list[tuple[str, float]]:
     colors = pytest.importorskip("matplotlib.colors")
     return [
         (colors.to_hex(patch.get_facecolor()), patch.get_facecolor()[3])
@@ -28,7 +30,15 @@ def _size_bar_styles(ax) -> list[tuple[str, float]]:
     ]
 
 
-def _visible_yticklabels(ax) -> list[str]:
+def _size_bar_heights(ax: Any) -> list[float]:
+    return [patch.get_height() for patch in ax.patches if patch.get_zorder() == 1]
+
+
+def _size_bar_widths(ax: Any) -> list[float]:
+    return [patch.get_width() for patch in ax.patches if patch.get_zorder() == 1]
+
+
+def _visible_yticklabels(ax: Any) -> list[str]:
     labels = []
     for tick in ax.get_yticklabels():
         _, display_y = ax.transData.transform((0, tick.get_position()[1]))
@@ -36,7 +46,7 @@ def _visible_yticklabels(ax) -> list[str]:
     return [label for _, label in sorted(labels, reverse=True)]
 
 
-def _plot_texts(ax) -> list[str]:
+def _plot_texts(ax: Any) -> list[str]:
     return [text.get_text() for text in ax.texts]
 
 
@@ -50,7 +60,7 @@ def test_plot_returns_matplotlib_figure_and_axes() -> None:
     fig, ax = ship.plot("group")
 
     try:
-        assert ax.get_title() == "group"
+        assert ax.get_title() == ""
         assert ax.get_ylabel() == "Rate"
         assert [tick.get_text() for tick in ax.get_xticklabels()] == [
             "Before",
@@ -74,11 +84,26 @@ def test_plot_respects_explicit_levels() -> None:
 
     try:
         assert [tick.get_text() for tick in ax.get_xticklabels()] == [
-            "Original",
+            "Baseline",
             "B",
             "A",
-            "Refitted",
+            "Comparison",
         ]
+    finally:
+        plt.close(fig)
+
+
+def test_plot_uses_x_label() -> None:
+    plt = _require_pyplot()
+
+    data1 = pd.DataFrame({"group": ["A", "B"], "y": [1, 1]})
+    data2 = pd.DataFrame({"group": ["A", "B"], "y": [0, 1]})
+    ship = create_ship(data1, data2, x_label="Segment")
+
+    fig, ax = ship.plot("group")
+
+    try:
+        assert ax.get_xlabel() == "Segment"
     finally:
         plt.close(fig)
 
@@ -138,6 +163,21 @@ def test_plot_size_bars_use_r_colors_without_alpha() -> None:
         plt.close(fig)
 
 
+def test_plot_size_bars_default_to_max_score_scale() -> None:
+    plt = _require_pyplot()
+
+    data1 = pd.DataFrame({"group": ["A", "B"], "y": [1, 1]})
+    data2 = pd.DataFrame({"group": ["A", "B"], "y": [0, 1]})
+    ship = create_ship(data1, data2)
+
+    fig, ax = ship.plot("group")
+
+    try:
+        assert _size_bar_heights(ax) == pytest.approx([15.0, 15.0, 15.0, 15.0])
+    finally:
+        plt.close(fig)
+
+
 def test_plot_flip_returns_horizontal_matplotlib_plot() -> None:
     plt = _require_pyplot()
 
@@ -148,7 +188,7 @@ def test_plot_flip_returns_horizontal_matplotlib_plot() -> None:
     fig, ax = ship.plot_flip("group")
 
     try:
-        assert ax.get_title() == "group"
+        assert ax.get_title() == ""
         assert ax.get_xlabel() == "Rate"
         assert _visible_yticklabels(ax) == [
             "Before",
@@ -224,6 +264,21 @@ def test_plot_flip_size_bars_use_r_colors_without_alpha() -> None:
         plt.close(fig)
 
 
+def test_plot_flip_size_bars_default_to_max_score_scale() -> None:
+    plt = _require_pyplot()
+
+    data1 = pd.DataFrame({"group": ["A", "B"], "y": [1, 1]})
+    data2 = pd.DataFrame({"group": ["A", "B"], "y": [0, 1]})
+    ship = create_ship(data1, data2)
+
+    fig, ax = ship.plot_flip("group")
+
+    try:
+        assert _size_bar_widths(ax) == pytest.approx([15.0, 15.0, 15.0, 15.0])
+    finally:
+        plt.close(fig)
+
+
 def test_plot_flip_respects_reversed_explicit_levels() -> None:
     plt = _require_pyplot()
 
@@ -235,11 +290,26 @@ def test_plot_flip_respects_reversed_explicit_levels() -> None:
 
     try:
         assert _visible_yticklabels(ax) == [
-            "Original",
+            "Baseline",
             "B",
             "A",
-            "Refitted",
+            "Comparison",
         ]
+    finally:
+        plt.close(fig)
+
+
+def test_plot_flip_uses_x_label_on_category_axis() -> None:
+    plt = _require_pyplot()
+
+    data1 = pd.DataFrame({"group": ["A", "B"], "y": [1, 1]})
+    data2 = pd.DataFrame({"group": ["A", "B"], "y": [0, 1]})
+    ship = create_ship(data1, data2, x_label="Segment")
+
+    fig, ax = ship.plot_flip("group")
+
+    try:
+        assert ax.get_ylabel() == "Segment"
     finally:
         plt.close(fig)
 

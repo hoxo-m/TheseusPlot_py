@@ -35,11 +35,28 @@ def test_create_ship_returns_ship_object() -> None:
     data1 = pd.DataFrame({"group": ["A", "B"], "y": [1, 0]})
     data2 = pd.DataFrame({"group": ["A", "B"], "y": [0, 1]})
 
-    ship = create_ship(data1, data2, y="y", labels=("Before", "After"))
+    ship = create_ship(
+        data1,
+        data2,
+        y="y",
+        labels=("Before", "After"),
+        x_label="Segment",
+    )
 
     assert isinstance(ship, ShipOfTheseus)
     assert ship.outcome == "y"
     assert ship.labels == ("Before", "After")
+    assert ship.x_label == "Segment"
+
+
+def test_create_ship_uses_r_0_3_0_defaults() -> None:
+    data1 = pd.DataFrame({"group": ["A"], "y": [1]})
+    data2 = pd.DataFrame({"group": ["A"], "y": [0]})
+
+    ship = create_ship(data1, data2)
+
+    assert ship.labels == ("Baseline", "Comparison")
+    assert ship.digits == 1
 
 
 def test_create_ship_validates_outcome_column() -> None:

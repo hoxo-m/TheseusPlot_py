@@ -5,22 +5,24 @@
 
 <!-- badges: start -->
 
-[![PyPI version](https://img.shields.io/pypi/v/theseusplot.svg)](https://pypi.org/project/theseusplot/)
+[![PyPI
+version](https://img.shields.io/pypi/v/theseusplot.svg)](https://pypi.org/project/theseusplot/)
 [![Downloads](https://static.pepy.tech/badge/theseusplot)](https://pepy.tech/project/theseusplot)
 [![CI](https://github.com/hoxo-m/TheseusPlot_py/actions/workflows/ci.yml/badge.svg)](https://github.com/hoxo-m/TheseusPlot_py/actions/workflows/ci.yml)
 <!-- badges: end -->
 
 ## 1. Overview
 
-In data analysis, when a metric differs between two groups, we sometimes
+In data analysis, when a metric differs between two groups, we often
 want to investigate whether a particular subgroup is driving that
-difference. For example, when a key metric decline is detected compared
-to the previous year, you may want to conduct a more detailed analysis.
-In this analysis, you may focus on gender among the attributes and
-examine whether the decline occurred among male, female, or both.
-However, this type of analysis is challenging when the metric is a rate,
-because the magnitude of each subgroup’s contribution to the rate cannot
-be simply calculated, unlike in the case of volume metrics.
+difference. For example, when you observe a decline in a key metric
+compared with the previous year, you may want to conduct a more detailed
+analysis. In such an analysis, you might focus on one attribute, such as
+gender, and examine whether the decline was driven by male users, female
+users, or both. However, this type of analysis is challenging when the
+metric is a rate, because each subgroup’s contribution to the rate
+difference cannot be simply calculated, unlike in the case of volume
+metrics.
 
 To address this issue, we propose an approach inspired by the story of
 the *[Ship of Theseus](https://en.wikipedia.org/wiki/Ship_of_Theseus)*.
@@ -29,25 +31,25 @@ with those of another, recalculating the metric at each step. The change
 in the metric at each step can then be interpreted as the contribution
 of each subgroup to the overall difference.
 
-For instance, suppose the metric was 6.2% in 2024 and decreased to 5.2%
-in 2025. Again, we focus on gender. We replace the male data within the
-2024 dataset with the male data from 2025 and recalculate the metric. As
-a result, the metric would drop by 0.8 percentage points, reaching 5.4%.
-In this case, the contribution of the male group to the change in the
-metric is -0.8 percentage points. Next, we replace the female data from
-2024 with that from 2025. The dataset then consists entirely of 2025
-data, and the metric drops by 0.2 percentage points, reaching 5.2%.
-Thus, the contribution of the female group is -0.2 percentage points.
+For instance, suppose the click-through rate (CTR) was 6.2% in 2024 and
+decreased to 5.2% in 2025. Again, we focus on gender. We replace the
+male users in the 2024 dataset with the male users from 2025 and
+recalculate the CTR. As a result, the CTR would drop by 0.8 percentage
+points, reaching 5.4%. In this case, the contribution of male users to
+the change in CTR is -0.8 percentage points. Next, we replace the female
+users from 2024 with those from 2025. The dataset then consists entirely
+of 2025 data, and CTR drops by 0.2 percentage points, reaching 5.2%.
+Thus, the contribution of female users is -0.2 percentage points.
 
 When visualized, the results appear as follows:
 
 <img src="README-figures/overview-1.png" alt="" width="500" />
 
-From this plot, we can see that the decline in the metric is primarily
-driven by the male group. We call this visualization the “Theseus Plot.”
+From this plot, we can see that the decline in CTR is primarily driven
+by male users. We call this visualization the “Theseus Plot.”
 
 The **TheseusPlot** package is designed to make it easy to generate
-Theseus Plots for various attributes.
+Theseus Plots for any column that defines subgroups.
 
 ## 2. Installation
 
@@ -89,7 +91,7 @@ using a Theseus plot.
 First, we create an `on_time` column in the data frame to indicate
 whether each flight arrived on time. Next, we extract the flights for
 November and December into separate data frames to form two comparison
-groups. The on-time arrival rate was 64% in November and dropped to 47%
+groups. The on-time arrival rate was 83% in November and dropped to 67%
 in December.
 
 ``` python
@@ -149,6 +151,11 @@ ship = create_ship(
 )
 ```
 
+If `labels` is omitted, the default labels are `"Baseline"` and
+`"Comparison"`. Plot values are displayed with one decimal place by
+default. You can customize the endpoint labels, axis labels, and
+displayed precision with `labels`, `x_label`, `y_label`, and `digits`.
+
 You can create a Theseus plot by passing column names to the `plot`
 method of a `ship` object. For example, to create a Theseus plot for the
 airport of origin:
@@ -166,7 +173,7 @@ on-time arrival rate.
 
 Note that the number of flights at each airport matters, as a larger
 flight volume is expected to have a greater impact. To make this clear,
-the Theseus plot displays the data size for each group within each
+the Theseus plot displays the sample size for each group within each
 subgroup as a bar chart. From this, we see that the number of flights is
 similar across airports, allowing for direct comparison of
 contributions.
@@ -218,7 +225,7 @@ largest contributions to the decline in on-time arrival rate.
 
 ### 3.4 Automatic Discretization of Continuous Values
 
-Theseus plots do not directly support continuous variables. If a
+Theseus plots are primarily designed for categorical variables. If a
 continuous column is provided, it is automatically discretized. For
 example, we can create a Theseus plot for departure delays.
 
@@ -247,59 +254,99 @@ This result shows that both a decrease in on-time departures and an
 increase in delayed departures contributed to the decline in on-time
 arrival rate.
 
-### 3.5 Ordering for Factor Columns
+### 3.5 Controlling Category Order with Categorical Columns
 
-If a subgroup column is categorical, `table()` and `plot()` respect its
-category order. This is useful when you want to keep a meaningful
-predefined order, such as `"Low"`, `"Medium"`, and `"High"`, instead of
-ordering categories by their contributions.
+By default, string-like columns are ordered by contribution size in
+`table()`, `plot()`, and `plot_flip()`. If you want to use a specific
+order instead, convert the column to an ordered categorical column. For
+categorical columns, TheseusPlot respects the order of the category
+levels.
+
+This is useful when the categories have a natural order, such as
+`"Low"`, `"Medium"`, and `"High"`, or when you want to define the order
+manually.
+
+For example, suppose we classify departure delays into three categories:
+`"Early"`, `"On-time"`, and `"Delayed"`.
+
+When `departure_type` is a string column, the categories are ordered by
+their contributions.
+
+``` python
+import numpy as np
+
+
+def to_departure_type(series):
+    return np.select(
+        [series <= -4, series <= 4, series > 4],
+        ["Early", "On-time", "Delayed"],
+        default="Delayed",
+    )
+
+
+data_nov = data_nov.assign(
+    departure_type=lambda df: to_departure_type(df["dep_delay"]),
+)
+data_dec = data_dec.assign(
+    departure_type=lambda df: to_departure_type(df["dep_delay"]),
+)
+
+ship = create_ship(
+    data_nov,
+    data_dec,
+    y="on_time",
+    labels=("November", "December"),
+)
+
+fig, ax = ship.plot_flip("departure_type")
+fig.show()
+```
+
+<img src="README-figures/no_factor_column-13.png" alt="" width="500" />
+
+To display the categories in a meaningful order, convert
+`departure_type` to an ordered categorical column and specify the
+category order.
 
 ``` python
 import pandas as pd
 from pandas.api.types import CategoricalDtype
 
-segment_type = CategoricalDtype(
-    categories=["Low", "Medium", "High"],
+
+departure_type_order = CategoricalDtype(
+    categories=["Early", "On-time", "Delayed"],
     ordered=True,
 )
 
-data1 = pd.DataFrame(
-    {
-        "segment": pd.Series(
-            ["Low", "Low", "Medium", "Medium", "High", "High"],
-            dtype=segment_type,
-        ),
-        "y": [1, 1, 1, 0, 1, 1],
-    }
+
+def to_departure_type(series):
+    values = np.select(
+        [series <= -4, series <= 4, series > 4],
+        ["Early", "On-time", "Delayed"],
+        default="Delayed",
+    )
+    return pd.Series(values, index=series.index).astype(departure_type_order)
+
+
+data_nov = data_nov.assign(
+    departure_type=lambda df: to_departure_type(df["dep_delay"]),
+)
+data_dec = data_dec.assign(
+    departure_type=lambda df: to_departure_type(df["dep_delay"]),
 )
 
-data2 = pd.DataFrame(
-    {
-        "segment": pd.Series(
-            ["Low", "Low", "Medium", "Medium", "High", "High"],
-            dtype=segment_type,
-        ),
-        "y": [1, 0, 1, 1, 0, 0],
-    }
+ship = create_ship(
+    data_nov,
+    data_dec,
+    y="on_time",
+    labels=("November", "December"),
 )
 
-ship = create_ship(data1, data2, y="y", labels=("Group 1", "Group 2"))
-
-print(ship.table("segment"))
-#>   segment   contrib  n1  n2  x1  x2  rate1  rate2
-#> 0     Low -0.166667   2   2   2   1    1.0    0.5
-#> 1  Medium  0.166667   2   2   1   2    0.5    1.0
-#> 2    High -0.333333   2   2   2   0    1.0    0.0
-
-fig, ax = ship.plot("segment")
+fig, ax = ship.plot_flip("departure_type")
 fig.show()
 ```
 
-<img src="README-figures/factor_column-13.png" alt="" width="500" />
+<img src="README-figures/factor_column-15.png" alt="" width="500" />
 
-Even if the contribution of `"High"` is larger than that of `"Low"` or
-`"Medium"`, the rows and bars are shown in the order
-`"Low" -> "Medium" -> "High"` because `segment` is categorical.
-
-By contrast, if `segment` were an object column, the output would be
-ordered by contribution rather than by a predefined level order.
+You can change the category levels to display the categories in any
+order you choose.

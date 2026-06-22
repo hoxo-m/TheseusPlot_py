@@ -36,6 +36,7 @@ class ShipOfTheseus:
         y_label: str | None,
         digits: int,
         text_size: float,
+        x_label: str | None = None,
     ) -> None:
         self._validate_inputs(data1, data2, outcome, labels)
 
@@ -43,6 +44,7 @@ class ShipOfTheseus:
         self._data2 = self._prepare_input_data(data2, outcome)
         self.outcome = outcome
         self.labels = (labels[0], labels[1])
+        self.x_label = x_label
         self.y_label = y_label
         self.digits = digits
         self.text_size = text_size
@@ -180,7 +182,7 @@ class ShipOfTheseus:
         """Generate a Theseus plot for a column."""
 
         continuous_config_value = continuous or continuous_config()
-        score1, _ = self._compute_scores(column)
+        score1, score2 = self._compute_scores(column)
         table = self.table(column, n=n, continuous=continuous_config_value)
         plot_data = self._plot_contribution_data(
             table=table,
@@ -192,6 +194,7 @@ class ShipOfTheseus:
             column=column,
             main_item=main_item,
             bar_max_value=bar_max_value,
+            max_score=max(score1, score2),
         )
         waterfall = self._waterfall_data(
             items=plot_data[column].astype(str).tolist(),
@@ -220,7 +223,7 @@ class ShipOfTheseus:
         """Generate a horizontally oriented Theseus plot for a column."""
 
         continuous_config_value = continuous or continuous_config()
-        _, score2 = self._compute_scores(column)
+        score1, score2 = self._compute_scores(column)
         table = self.table(column, n=n, continuous=continuous_config_value)
         table = table.copy()
         table["contrib"] = -table["contrib"]
@@ -234,6 +237,7 @@ class ShipOfTheseus:
             column=column,
             main_item=main_item,
             bar_max_value=bar_max_value,
+            max_score=max(score1, score2),
         )
         waterfall = self._waterfall_data(
             items=plot_data[column].astype(str).tolist(),
@@ -506,6 +510,7 @@ class ShipOfTheseus:
         column: str,
         main_item: str | None,
         bar_max_value: float | None,
+        max_score: float,
     ) -> pd.DataFrame:
         size_data = pd.concat(
             [
@@ -535,6 +540,7 @@ class ShipOfTheseus:
             column=column,
             main_item=main_item,
             bar_max_value=bar_max_value,
+            max_score=max_score,
         )
         if np.isclose(n_max, 0.0) or np.isclose(max_amount, 0.0):
             size_data["scaled_n"] = 0.0
@@ -548,6 +554,8 @@ class ShipOfTheseus:
         column: str,
         main_item: str | None,
         bar_max_value: float | None,
+        max_score: float,
+        bar_min_ratio: float = 0.15,
     ) -> tuple[float, float]:
         data = table.copy()
         data["_max_n"] = data[["n1", "n2"]].max(axis=1).astype(float)
@@ -563,8 +571,7 @@ class ShipOfTheseus:
         if bar_max_value is not None:
             return abs(float(bar_max_value)), float(data["_max_n"].max())
 
-        row = data.sort_values("_abs_contrib", ascending=False).head(1)
-        return float(row["_abs_contrib"].iloc[0]), float(row["_max_n"].iloc[0])
+        return abs(float(max_score)) * 100 * bar_min_ratio, float(data["_max_n"].max())
 
     def _waterfall_data(
         self,
@@ -646,8 +653,8 @@ class ShipOfTheseus:
         ax.set_xticks(positions)
         ax.set_xticklabels(waterfall["items"].astype(str), rotation=45, ha="right")
         ax.set_ylabel(self.y_label or "")
-        ax.set_xlabel("")
-        ax.set_title(column)
+        ax.set_xlabel(self.x_label or "")
+        ax.set_title("")
         ax.margins(x=0.02)
         fig.tight_layout()
         return fig, ax
@@ -696,8 +703,8 @@ class ShipOfTheseus:
         ax.set_yticks(positions)
         ax.set_yticklabels(waterfall["items"].astype(str))
         ax.set_xlabel(self.y_label or "")
-        ax.set_ylabel("")
-        ax.set_title(column)
+        ax.set_ylabel(self.x_label or "")
+        ax.set_title("")
         ax.margins(y=0.02)
         fig.tight_layout()
         return fig, ax
@@ -1209,10 +1216,11 @@ def create_ship(
     data1: pd.DataFrame,
     data2: pd.DataFrame,
     y: str = "y",
-    labels: Sequence[str] = ("Original", "Refitted"),
+    labels: Sequence[str] = ("Baseline", "Comparison"),
     y_label: str | None = None,
-    digits: int = 3,
+    digits: int = 1,
     text_size: float = 1.0,
+    x_label: str | None = None,
 ) -> ShipOfTheseus:
     """Create a ShipOfTheseus object."""
 
@@ -1224,4 +1232,5 @@ def create_ship(
         y_label=y_label,
         digits=digits,
         text_size=text_size,
+        x_label=x_label,
     )
